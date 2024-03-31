@@ -7,14 +7,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import io.jsonwebtoken.security.Keys;
 
+import javax.crypto.SecretKey;
 import java.util.Date;
 
 @Service
 public class TokenProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(TokenProvider.class);
-
+    private static final SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
     private final AppProperties appProperties;
 
     public TokenProvider(AppProperties appProperties) {
@@ -31,13 +33,13 @@ public class TokenProvider {
                 .setSubject(Long.toString(userPrincipal.getId()))
                 .setIssuedAt(new Date())
                 .setExpiration(expiryDate)
-                .signWith(SignatureAlgorithm.HS512, appProperties.getAuth().getTokenSecret())
+                .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
     }
 
     public Long getUserIdFromToken(String token) {
         Claims claims = Jwts.parserBuilder()
-                .setSigningKey(appProperties.getAuth().getTokenSecret())
+                .setSigningKey(key)
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
@@ -48,7 +50,7 @@ public class TokenProvider {
     public boolean validateToken(String authToken) {
         try {
             Jwts.parserBuilder()
-                    .setSigningKey(appProperties.getAuth().getTokenSecret())
+                    .setSigningKey(key)
                     .build().parseClaimsJws(authToken);
             return true;
         } catch (SignatureException ex) {

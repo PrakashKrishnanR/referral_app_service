@@ -9,7 +9,8 @@ import java.util.Optional;
 
 @Repository
 public interface ReferralRepository extends JpaRepository<Referral, Long> {
-    Optional<User> findByEmail(String email);
-    Boolean existsByEmail(String email);
+    Optional<Referral> findByUser(User user);
+
+    Optional<Referral> findByReferralCode(String referralCode);
 
 }

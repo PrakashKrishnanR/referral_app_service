@@ -1,0 +1,24 @@
+package com.loyalty.backend.service;
+
+import com.loyalty.backend.entity.OfferDocument;
+import com.loyalty.backend.repository.OfferDocumentRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.time.LocalDateTime;
+
+@Service
+public class FileStorageService {
+
+    @Autowired
+    OfferDocumentRepository fileRepository;
+
+    public void storeFile(MultipartFile file) throws IOException {
+        OfferDocument fileEntity = new OfferDocument();
+        fileEntity.setDocument(file.getBytes());
+        fileEntity.setUpdatedAt(LocalDateTime.now());
+        fileRepository.save(fileEntity);
+    }
+}

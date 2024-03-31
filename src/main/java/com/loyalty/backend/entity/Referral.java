@@ -18,10 +18,13 @@ public class Referral {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    public int useCount;
+
 
     public Referral(String referralCode, User user) {
         this.referralCode = referralCode;
         this.user = user;
+        this.useCount = 0;
     }
 
     public Referral() {
@@ -50,5 +53,13 @@ public class Referral {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public int getUseCount() {
+        return useCount;
+    }
+
+    public void setUseCount(int useCount) {
+        this.useCount = useCount;
     }
 }
