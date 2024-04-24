@@ -23,14 +23,15 @@ public class OfferDocumentController {
     OfferDocumentRepository repo;
 
     @GetMapping("/latest")
-    public ResponseEntity<?> getLatestOfferDocument() {
+    public ResponseEntity<ByteArrayResource> getLatestOfferDocument() {
         Optional<OfferDocument> latestDocumentOptional = repo
                 .findFirstByOrderByUpdatedAtDesc();
 
         return latestDocumentOptional
                 .map(pdfDocument -> ResponseEntity.ok()
                         .contentType(MediaType.APPLICATION_PDF)
-                        .header("Content-Disposition", "attachment; filename=\"" + "loyaltyOffer" + "\"")
+                        .header("Content-Disposition", "inline; filename=\"" + "loyaltyOffer" + "\"")
+                        .header(HttpHeaders.CACHE_CONTROL, "no-cache, no-store, must-revalidate")
                         .body(new ByteArrayResource(pdfDocument.getDocument())))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
